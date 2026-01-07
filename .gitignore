@@ -1,0 +1,52 @@
+# ======================
+# Python virtual env
+# ======================
+.venv/
+venv/
+env/
+
+# ======================
+# Python cache / build
+# ======================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+
+# ======================
+# Jupyter Notebook
+# ======================
+.ipynb_checkpoints/
+
+# ======================
+# IDEs / Editors
+# ======================
+.idea/
+.vscode/
+
+# ======================
+# OS junk
+# ======================
+.DS_Store
+Thumbs.db
+
+# ======================
+# Packaging / builds
+# ======================
+build/
+dist/
+*.egg-info/
+
+# ======================
+# Logs / temp files
+# ======================
+*.log
+*.tmp
+
+# ======================
+# Coverage / testing
+# ======================
+.coverage
+htmlcov/
