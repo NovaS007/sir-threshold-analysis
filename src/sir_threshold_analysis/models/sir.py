@@ -1,17 +1,51 @@
-class SIRModel:
-    def __init__(self,
-                 beta,
-                 gamma,
-                 population_size):
-        self.beta = beta # beta refers to the transmission rate
-        self.gamma = gamma # gamma is the recovery rate
-        self.N = population_size # population size is equal to S+I+R
+from typing import Tuple
 
-    def derivatives(self, t, y):
-        # S is amount of the population susceptible to the epidemic
-        # I is the amount of the population infected with the epidemic
-        # R is the amount of the population recovered from the epidemic
-        # All derivatives taken with respect to time
+
+class SIRModel:
+    """
+    SIR epidemiological model class.
+    Attributes:
+        beta (float): Transmission rate.
+        gamma (float): Recovery rate.
+        N (int): Total population size.
+    Methods:
+        derivatives(t, y): Compute the derivatives for the SIR model.
+        euler_step(t, y, dt): Perform a single Euler integration step.
+        simulate(y0, t_end, dt): Simulate the SIR model over time.
+    """
+
+    def __init__(self,
+                 beta: float,
+                 gamma: float,
+                 population_size: int):
+        """
+        Initialize the SIR model with parameters.
+        Args:
+            beta (float): Transmission rate.
+            gamma (float): Recovery rate.
+            population_size (int): Total population size.
+        """
+        self.beta = beta
+        # transmission rate (beta) = contact_rate * transmission_probability
+        # transmission probability = R0 / (contact_rate * infectious_period)
+        self.gamma = gamma
+        # recovery rate = 1 / infectious period
+        self.N = population_size
+        # N = S + I + R
+
+    # Compute the derivatives for the SIR model
+    def derivatives(self,
+                    _t: float,
+                    y: Tuple[float, float, float]) -> Tuple[float, float, float]:
+        """
+        Compute the derivatives for the SIR model.
+        Args:
+            _t (float): Unused variable but included for compatibility.
+            y (tuple): Current state (S, I, R).
+        Returns:
+            Tuple of derivatives (dS, dI, dR) with respect to unit time t.
+        """
+
         S, I, R = y
 
         dS = -self.beta * S * I / self.N
@@ -20,7 +54,21 @@ class SIRModel:
 
         return dS, dI, dR
 
-    def euler_step(self, t, y, dt):
+    # Simple Euler method for numerical integration
+    def euler_step(self,
+                   t: float,
+                   y: Tuple[float, float, float],
+                   dt: float) -> Tuple[float, float, float]:
+        """
+        Perform a single Euler integration step.
+        Args:
+            t (float): Current time.
+            y (tuple): Current state (S, I, R).
+            dt (float): Time step.
+        Returns:
+            Tuple of updated state (S, I, R) after time step dt.
+        """
+
         dS, dI, dR = self.derivatives(t, y)
 
         return (
@@ -29,7 +77,20 @@ class SIRModel:
             y[2] + dt * dR,
         )
 
-    def simulate(self, y0, t_end, dt):
+    def simulate(self,
+                 y0: Tuple[float, float, float],
+                 t_end: float,
+                 dt: float) -> list[Tuple[float, float, float, float]]:
+        """
+        Simulate the SIR model over time.
+        Args:
+            y0 (tuple): Initial state (S0, I0, R0).
+            t_end (float): End time for the simulation.
+            dt (float): Time step for the simulation.
+        Returns:
+            List of tuples containing (time, S, I, R) at each time step.
+        """
+
         t = 0.0
         y = y0
         history = []
