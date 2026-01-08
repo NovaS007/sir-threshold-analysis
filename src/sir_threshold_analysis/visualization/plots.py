@@ -1,28 +1,29 @@
-import pandas as pd
-import matplotlib
+import sir_threshold_analysis.models.sir as sir_model
 import matplotlib.pyplot as plt
 
-
-# Makes a simple line plot of the SIR model data
-def plot_sir(history: list[tuple[float, float, float, float]]) -> None:
+def plot_sir_simulation(disease, y0, t_end, dt):
     """
-    Plot the SIR model results over time.
-    Args:
-        history (list): List of tuples containing (time, S, I, R) at each time step.
+    Plot the SIR model simulation over time.
     """
+    results = disease.simulate(y0, t_end, dt)
 
-    # Convert history to DataFrame for easier plotting
-    df = pd.DataFrame(history, columns=['Time', 'Susceptible', 'Infected', 'Recovered'])
+    times = [t for t, _, _, _ in results]
+    S_values = [S for _, S, _, _ in results]
+    I_values = [I for _, _, I, _ in results]
+    R_values = [R for _, _, _, R in results]
 
     plt.figure(figsize=(10, 6))
-    plt.plot(df['Time'], df['Susceptible'], label='Susceptible', color='blue')
-    plt.plot(df['Time'], df['Infected'], label='Infected', color='red')
-    plt.plot(df['Time'], df['Recovered'], label='Recovered', color='green')
+    plt.plot(times, S_values, label="Susceptible")
+    plt.plot(times, I_values, label="Infected")
+    plt.plot(times, R_values, label="Recovered")
 
-    plt.title('SIR Model Simulation')
-    plt.xlabel('Time')
-    plt.ylabel('Number of Individuals')
+    plt.xlabel("Time")
+    plt.ylabel("Population")
+    plt.title("SIR Model Simulation")
     plt.legend()
-    plt.grid()
+    plt.grid(True)
+    plt.tight_layout()
     plt.show()
-    input("Press Enter to close plot...")
+
+disease1 = sir_model.SIRModel(beta=0.3, gamma=0.01, population_size=1000)
+plot_sir_simulation(disease1, (999, 1, 0), 100, 0.1)
