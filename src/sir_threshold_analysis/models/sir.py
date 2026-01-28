@@ -1,6 +1,5 @@
 from typing import Tuple
 
-
 class SIRModel:
     """
     SIR epidemiological model class.
@@ -10,8 +9,6 @@ class SIRModel:
         N (int): Total population size.
     Methods:
         derivatives(t, y): Compute the derivatives for the SIR model.
-        euler_step(t, y, dt): Perform a single Euler integration step.
-        simulate(y0, t_end, dt): Simulate the SIR model over time.
     """
 
     def __init__(self,
@@ -41,63 +38,15 @@ class SIRModel:
         Compute the derivatives for the SIR model.
         Args:
             _t (float): Unused variable but included for compatibility.
-            y (tuple): Current state (S, I, R).
+            y (tuple): Current state (s, i, r).
         Returns:
-            Tuple of derivatives (dS, dI, dR) with respect to unit time t.
+            Tuple of partial derivatives (ds, di, dr) with respect to unit time t.
         """
 
-        S, I, R = y
+        s, i, r = y
 
-        dS = -self.beta * S * I / self.N
-        dI = self.beta * S * I / self.N - self.gamma * I
-        dR = self.gamma * I
+        ds = -self.beta * s * i / self.N
+        di = self.beta * s * i / self.N - self.gamma * i
+        dr = self.gamma * i
 
-        return dS, dI, dR
-
-    # Simple Euler method for numerical integration
-    def euler_step(self,
-                   t: float,
-                   y: Tuple[float, float, float],
-                   dt: float) -> Tuple[float, float, float]:
-        """
-        Perform a single Euler integration step.
-        Args:
-            t (float): Current time.
-            y (tuple): Current state (S, I, R).
-            dt (float): Time step.
-        Returns:
-            Tuple of updated state (S, I, R) after time step dt.
-        """
-
-        dS, dI, dR = self.derivatives(t, y)
-
-        return (
-            y[0] + dt * dS,
-            y[1] + dt * dI,
-            y[2] + dt * dR,
-        )
-
-    def simulate(self,
-                 y0: Tuple[float, float, float],
-                 t_end: float,
-                 dt: float) -> list[Tuple[float, float, float, float]]:
-        """
-        Simulate the SIR model over time.
-        Args:
-            y0 (tuple): Initial state (S0, I0, R0).
-            t_end (float): End time for the simulation.
-            dt (float): Time step for the simulation.
-        Returns:
-            List of tuples containing (time, S, I, R) at each time step.
-        """
-
-        t = 0.0
-        y = y0
-        history = []
-
-        while t <= t_end:
-            history.append((t, *y))
-            y = self.euler_step(t, y, dt)
-            t += dt
-
-        return history
+        return ds, di, dr
