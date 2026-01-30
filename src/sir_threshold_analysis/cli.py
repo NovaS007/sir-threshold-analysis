@@ -1,4 +1,5 @@
 # this file serves as the UI for the project for now
+# will be replaced with a GUI later
 
 from __future__ import annotations
 from typing import Any
@@ -24,6 +25,8 @@ def ask_int(prompt: str) -> int:
             print("Please enter a valid integer (e.g., 1000).")
 
 def create_disease_model() -> object | None:
+    # Menu of available models, the dictionary maps user choice to:
+    # (label, constructor, list of (param_name, prompt, type))
     model_menu: dict[int, tuple[str, type, list[tuple[str, str, str]]]] = {
         1: (
             "SIR Model",
@@ -66,9 +69,11 @@ def create_disease_model() -> object | None:
         print("Invalid choice. Please select a valid model.")
         return None
 
+    # Get selected model info
     label, ctor, params = model_menu[choice]
     print(f"\nSelected: {label}\n")
 
+    # Gather parameters
     kwargs: dict[str, Any] = {}
     for name, prompt, kind in params:
         if kind == "float":
@@ -78,6 +83,7 @@ def create_disease_model() -> object | None:
         else:
             raise ValueError(f"Unknown param kind: {kind}")
 
+    # Create and return the model instance
     return ctor(**kwargs)
 
 
@@ -96,10 +102,10 @@ def ask_initial_conditions(disease: object, labels: list[str]) -> tuple[float, .
     Ask for initial compartment values, but compute S automatically so totals match population size.
     Defaults: I=1, others (except S) = 0.
     """
-    # All your models store N as self.N per earlier code
     N = int(getattr(disease, "N"))
 
     # Build defaults for non-S compartments
+    # Assume 1 infected initially, others 0
     defaults: dict[str, int] = {lab: 0 for lab in labels}
     if "Infected" in defaults:
         defaults["Infected"] = 1
@@ -180,7 +186,6 @@ def main() -> None:
     t_end, dt = ask_time_settings()
 
     # This assumes you have a generic function like:
-    # plots.plot_simulation(disease, y0, t_end, dt, labels, title=None)
     plots.plot_simulation(
         disease=disease,
         y0=y0,

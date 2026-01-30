@@ -2,13 +2,21 @@ import matplotlib.pyplot as plt
 
 from sir_threshold_analysis.simulation.solver import simulate
 
-def plot_simulation(disease, y0, t_end, dt, labels, title=None):
+def plot_simulation(disease,
+                    y0,
+                    t_end,
+                    dt,
+                    labels,
+                    title=None):
     """
     Generic plotter for any compartment model that returns:
       [(t, y1, y2, ...), ...]
     where y1... are compartments in the same order as `labels`.
     """
-    results = simulate(disease, y0, t_end, dt)
+    results = simulate(disease,
+                       y0,
+                       t_end,
+                       dt)
 
     # times = first column
     times = [row[0] for row in results]
